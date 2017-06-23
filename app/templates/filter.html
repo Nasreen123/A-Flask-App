@@ -1,0 +1,12 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Filter Books</h1>
+  <form action="" method="post" name="filter">
+      {{ form.hidden_tag() }}
+
+      <p> {{ form.category }} </p>
+      <p><input type="submit" value="Filter"></p>
+  </form>
+{% endblock %}
