@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Books</h1>
+
+    <h2>Add a new book</h2>
+    <form action="" method="post" name="add">
+        {{ form.hidden_tag() }}
+
+        <p> title: {{ form.title }} </p>
+        <p> author: {{ form.author }} </p>
+        <p> category: {{ form.category }} </p>
+        <p><input type="submit" value="Add"></p>
+    </form>
+
+
+    <h2>Updated book list</h2>
+    {% for book in books %}
+
+    <div>
+      <p> {{ book.id }} {{ book.title }} by {{ book.author }} </p>
+    </div>
+
+    {% endfor %}
+
+
+{% endblock %}

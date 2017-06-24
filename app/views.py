@@ -1,55 +1,38 @@
 from flask import render_template, request
 from app import app
-from .forms import FilterForm
+from .forms import FilterForm, AddForm
+import json
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    books = [
-        {
-            'title': 'The God of Small Things',
-            'author': 'Arundhati Roy',
-            'category': 'novels'
-        },
-        {
-            'title': 'Drown',
-            'author': 'Junot Diaz',
-            'category': 'shortstories'
-        },
-        {
-            'title': 'A Map of Home',
-            'author': 'Randa Jarrar',
-            'category': 'novels'
-        }
-    ]
+    json_data = open('app/books.json').read()
+    books = json.loads(json_data)
     form = FilterForm()
-    for book in books:
-        print(book['category'])
+    print books
     if request.method == 'POST':
         if form.validate_on_submit() and form.category.data:
             category = form.category.data
-            books = [book for book in books if book['category'] == category]
+            if category != 'all':
+                books = [book for book in books if book['category'] == category]
             print(category)
     return render_template('index.html', books=books, form=form)
 
-
-
-"""def index():
-books = [
-    {
-        'title': 'The God of Small Things',
-        'author': 'Arundhati Roy',
-        'category': 'novel'
-    },
-    {
-        'title': 'Drown',
-        'author': 'Junot Diaz',
-        'category': 'short stories'
-    },
-    {
-        'title': 'A Map of Home',
-        'author': 'Randa Jarrar',
-        'category': 'novel'
-    }
-]
-return render_template('index.html', books=books)
-@app.route('/', methods=['GET', 'POST'])"""
+@app.route('/add', methods=['GET', 'POST'])
+def add():
+    json_data = open('app/books.json').read()
+    books = json.loads(json_data)
+    form = AddForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            title = form.title.data
+            author = form.author.data
+            category = form.category.data
+            book_id = len(books)+1
+            book = {"title": title, "author": author, "id": book_id, "category": category}
+            books.append(book)
+            with open('app/books.json', 'w') as outfile:
+                json.dump(books, outfile)
+            form.title.data = ""
+            form.author.data = ""
+            form.category.data = ""
+    return render_template('add.html', books=books, form=form)
